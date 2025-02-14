@@ -1,0 +1,73 @@
+@use '../../styles/variables.scss' as *;
+
+.imageWrapper { 
+  position: relative;
+  flex-basis: 50%;
+  padding: 0 4rem;
+
+  img {
+    &.logo {
+      position: absolute;
+      top: 100px;
+      left: 85px;
+      width: 180px;
+      height: 36px;
+    }
+
+    &.pablo {
+      height: auto;
+      // max-height: 220px;/
+    }
+  }
+}
+
+.formWrapper { 
+  flex-basis: 50%;
+  padding: 220px 160px 280px 100px;
+
+  form {
+    .formHeader {
+      span:nth-of-type(1) { font-size: 40px; }
+      span:nth-of-type(2) {
+        font-size: 20px;
+        margin-top: 0.625rem; 
+      }
+    }
+
+    .formBody {
+      .inputGroup {
+        position: relative;
+        width: 100%;
+    
+        &:nth-of-type(1) { margin-top: 60px; }
+    
+        input {
+          width: 100%;
+          padding: 12px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          font-size: 1rem;
+        }
+
+        .togglePassword {
+          position: absolute;
+          cursor: pointer;
+          height: 100%;
+          top: 0;
+          right: $input-padding;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+
+    .formFooter {
+      button[type="submit"] {
+        margin-top: 1.75rem;
+        width: 100%;
+        height: 48px;
+      }
+    }
+  }
+}
