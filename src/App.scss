@@ -5,6 +5,11 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'Avenir next';
+  src: url('./assets/fonts/AvenirNextLTPro-Regular.otf') format('truetype');
+}
+
 body {
   padding: 0;
   margin: 0;
