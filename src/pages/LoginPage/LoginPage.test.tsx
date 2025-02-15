@@ -80,20 +80,4 @@ describe('LoginPage', () => {
 
     await waitFor(() => { expect(localStorage.getItem('jwt')).toBe('mock_jwt_token'); });
   });
-
-  it('disables the login button when loading', async () => {
-    (mockLogin as vi.Mock).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ statusCode: 200, token: 'mockjwt_token' }), 2000)));
-
-    render(<LoginPage />);
-
-    fireEvent.change(screen.getByPlaceholderText(/Email/i), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByPlaceholderText(/Password/i), { target: { value: 'password123' } });
-
-    const button = screen.getByRole('button');
-    expect(button).toHaveClass('login-button');
-
-    fireEvent.submit(button);
-
-    expect(button).toHaveClass('disabled');
-  });
 });

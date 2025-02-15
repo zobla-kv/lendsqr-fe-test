@@ -5,12 +5,14 @@ import Pablo from '../../assets/img/pablo-sign-in.svg';
 
 import styles from './LoginPage.module.scss';
 
+import AsyncButton from '../../components/AsyncButton/AsyncButton';
+
 import { useAuthStore } from '../../store/useAuthStore';
 
 // TODO: Adjust layout
 
 const LoginPage = () => {
-  const { login, loading, setState } = useAuthStore();
+  const { login, setState } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -76,10 +78,12 @@ const LoginPage = () => {
           </div>
 
           <div className={styles.formFooter}>
-            {/* TODO: Move to separate component and add spinner*/}
-            <button type='submit' className={`login-button border-0 ${loading ? 'disabled' : ''}`}>
-              {loading ? 'Loading...' : 'LOG IN'}
-            </button>
+            <AsyncButton 
+              className='btn-primary border-0 login-button' 
+              type='submit'
+            >
+              LOG IN
+            </AsyncButton>
           </div>
 
         </form>
