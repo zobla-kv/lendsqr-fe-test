@@ -1,16 +1,31 @@
 import './App.scss';
-import LoginPage from './pages/LoginPage/LoginPage';
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import { Toaster } from 'react-hot-toast';
 
-function App() {
+import LoginPage from './pages/LoginPage/LoginPage';
+import Dashboard from './pages/Dashboard/Dashboard';
 
+import ProtectedRoute from './guards/ProtectedRoute';
+
+function App() {
   return (
     <>
-      <Toaster  />
-      <LoginPage />
+      <Toaster />
+      <Router>
+        <Routes>
+          <Route path='/' element={<LoginPage />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path='/dashboard' element={<Dashboard />} />
+          </Route>
+
+          <Route path='*' element={<Navigate to='/' replace />} />
+        </Routes>
+      </Router>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

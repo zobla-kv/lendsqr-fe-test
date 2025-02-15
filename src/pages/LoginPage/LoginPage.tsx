@@ -1,6 +1,6 @@
-import { FormEvent, useState } from 'react';
-import toast from 'react-hot-toast';
+import { FormEvent, useEffect, useState } from 'react';
 
+import toast from 'react-hot-toast';
 import { toastMessages } from '../../constants/constants';
 
 import Logo from '../../assets/img/logo.svg';
@@ -11,12 +11,28 @@ import styles from './LoginPage.module.scss';
 import AsyncButton from '../../components/AsyncButton/AsyncButton';
 
 import { useAuthStore } from '../../store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
 
 // TODO: Adjust layout
 
 const LoginPage = () => {
-  const { login, loading, setState } = useAuthStore();
+  const { login, loading, isAuthenticated, error, setState } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      toast.success(toastMessages.loggedIn);
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (error) {
+      console.log('error', error);
+      toast.error(error);
+    }
+  }, [error]);
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
@@ -27,7 +43,6 @@ const LoginPage = () => {
     const password = formData.get('password') as string;
 
     if (!email || !password) {
-      toast.error(toastMessages.credentialsRequired);
       setState({ loading: false, error: toastMessages.credentialsRequired });
       return;
     }

@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import { login } from '../../src/api/AuthApi';
 import { AuthResponse, ErrorResponse } from '../../src/models/ApiResponse';
 
-import { toast } from 'react-hot-toast';
 import { toastMessages } from '../constants/constants';
 
 interface AuthState {
@@ -26,18 +25,16 @@ export const useAuthStore = create<AuthState>()((set) => ({
       const authResponse = await login(email, password);
 
       if ((authResponse as ErrorResponse).statusCode === 401) {
-        toast.error(toastMessages.invalidCredentials)
-        set({ error: (authResponse as ErrorResponse).message, loading: false });
+        set({ loading: false, error: (authResponse as ErrorResponse).message });
         return;
       }
 
       const token = (authResponse as AuthResponse).token;
       localStorage.setItem('jwt', token);
 
-      toast.success(toastMessages.loggedIn);
-      set({ isAuthenticated: true, token, loading: false });
+      set({ isAuthenticated: true, token, loading: false, error: null });
     } catch (err) {
-      toast.error(toastMessages.somethingWentWrong);
+      set({ loading: false, error: toastMessages.somethingWentWrong });
     }
     finally {
       set({ loading: false });
