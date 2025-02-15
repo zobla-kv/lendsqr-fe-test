@@ -3,6 +3,9 @@ import { create } from 'zustand';
 import { login } from '../../src/api/AuthApi';
 import { AuthResponse, ErrorResponse } from '../../src/models/ApiResponse';
 
+import { toast } from 'react-hot-toast';
+import { toastMessages } from '../constants/constants';
+
 interface AuthState {
   isAuthenticated: boolean;
   token: string | null;
@@ -23,8 +26,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
       const authResponse = await login(email, password);
 
       if ((authResponse as ErrorResponse).statusCode === 401) {
-        // TODO: show toast with invalid credentials message
-        // TODO: create FE messages
+        toast.error(toastMessages.invalidCredentials)
         set({ error: (authResponse as ErrorResponse).message, loading: false });
         return;
       }
@@ -32,11 +34,10 @@ export const useAuthStore = create<AuthState>()((set) => ({
       const token = (authResponse as AuthResponse).token;
       localStorage.setItem('jwt', token);
 
+      toast.success(toastMessages.loggedIn);
       set({ isAuthenticated: true, token, loading: false });
     } catch (err) {
-      // TODO: show toast 'something went wrong';
-      // TODO: move to constants
-      set({ error: 'Something went wrong. Please try again.' });
+      toast.error(toastMessages.somethingWentWrong);
     }
     finally {
       set({ loading: false });

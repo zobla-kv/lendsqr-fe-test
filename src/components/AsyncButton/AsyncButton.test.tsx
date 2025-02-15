@@ -16,7 +16,7 @@ describe('AsyncButton', () => {
       setLoading: mockSetLoading,
     });
 
-    render(<AsyncButton>LOG IN</AsyncButton>);
+    render(<AsyncButton isLoading={true}>LOG IN</AsyncButton>);
     const button = screen.getByRole('button');
     expect(button).toHaveClass('disabled');
   });

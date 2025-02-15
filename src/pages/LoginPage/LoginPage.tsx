@@ -1,4 +1,7 @@
 import { FormEvent, useState } from 'react';
+import toast from 'react-hot-toast';
+
+import { toastMessages } from '../../constants/constants';
 
 import Logo from '../../assets/img/logo.svg';
 import Pablo from '../../assets/img/pablo-sign-in.svg';
@@ -12,7 +15,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 // TODO: Adjust layout
 
 const LoginPage = () => {
-  const { login, setState } = useAuthStore();
+  const { login, loading, setState } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -24,9 +27,8 @@ const LoginPage = () => {
     const password = formData.get('password') as string;
 
     if (!email || !password) {
-      // TODO: move error message to constants
-      setState({ loading: false, error: 'Credentials required' });
-      // TODO: show toast with validation messages
+      toast.error(toastMessages.credentialsRequired);
+      setState({ loading: false, error: toastMessages.credentialsRequired });
       return;
     }
 
@@ -67,10 +69,10 @@ const LoginPage = () => {
               </span>
             </div>
             
-            {/* TODO: show toast with 'coming soon' message */}
             <a 
               href='#' 
               className='text-xs d-block mt-5 text-primary uppercase fw-600 letter-spacing decoration-none'
+              onClick={() => toast.error(toastMessages.comingSoon)}
             >
               Forgot Password?
             </a>
@@ -81,6 +83,7 @@ const LoginPage = () => {
             <AsyncButton 
               className='btn-primary border-0 login-button' 
               type='submit'
+              isLoading={loading}
             >
               LOG IN
             </AsyncButton>

@@ -1,22 +1,19 @@
 import React, { useMemo } from 'react';
 
-import { useAuthStore } from '../../store/useAuthStore';
-
 import Spinner from '../Spinner/Spinner';
 
 interface AsyncButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
+  isLoading: boolean;
 }
 
-const AsyncButton: React.FC<AsyncButtonProps> = ({ children, className, ...props }) => {
-  const { loading } = useAuthStore();
-
+const AsyncButton: React.FC<AsyncButtonProps> = ({ children, className, isLoading, ...props }) => {
   const buttonContent = useMemo(() => {
-    return loading ? <Spinner /> : children;
-  }, [loading, children]);
+    return isLoading ? <Spinner /> : children;
+  }, [isLoading, children]);
 
   return (
-    <button className={`${className} flex-center ${loading ? 'disabled' : ''}`} {...props}>
+    <button className={`${className} flex-center ${isLoading ? 'disabled' : ''}`} {...props}>
       {buttonContent}
     </button>
   );

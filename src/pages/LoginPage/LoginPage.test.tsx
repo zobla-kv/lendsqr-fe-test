@@ -1,77 +1,68 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import LoginPage from './LoginPage';
-import { login as mockLogin } from '../../api/AuthApi';
-import { AuthResponse } from '../../models/ApiResponse';
 import '@testing-library/jest-dom';
 
+import LoginPage from './LoginPage';
+
+import { Toaster } from 'react-hot-toast';
+import { toastMessages } from '../../constants/constants';
+
+import { login as mockAuthApiLogin } from '../../api/AuthApi';
+
 vi.mock('../../api/AuthApi', () => ({
-  login: vi.fn(),
+  login: vi.fn()
 }));
 
 describe('LoginPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+
+    render(<LoginPage />);
+    render(<Toaster />);
   });
 
   it('renders login page correctly', () => {
-    render(<LoginPage />);
     expect(screen.getByText(/Welcome!/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Email/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Password/i)).toBeInTheDocument();
     expect(screen.getByText(/LOG IN/i)).toBeInTheDocument();
   });
 
-  // TODO: enable after implementing toast
-  // it('shows validation error if fields are empty', async () => {
-  //   render(<LoginPage />);
+  it('shows credentials required toast if form fields are empty', async () => {
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('login-button');
 
-  //   fireEvent.submit(screen.getByRole('button', { name: /LOG IN/i }));
+    fireEvent.submit(button);
 
-  //   // Check if validation message appears
-  //   expect(screen.getByText(/validation failed/i)).toBeInTheDocument();
-  // });
+    await waitFor(() => {
+      expect(screen.queryByText(toastMessages.credentialsRequired)).toBeInTheDocument();
+    });
+  });
 
-  it('calls login API on form submission', async () => {
-    const mockResponse: AuthResponse = { statusCode: 200, token: 'mock_jwt_token' };
-    (mockLogin as vi.Mock).mockResolvedValueOnce(mockResponse);
-
-    render(<LoginPage />);
+  it('shows invalid credentials toast when login API returns 401', async () => {
+    (mockAuthApiLogin as vi.Mock).mockResolvedValue({ statusCode: 401 });
 
     fireEvent.change(screen.getByPlaceholderText(/Email/i), { target: { value: 'user@test.com' } });
     fireEvent.change(screen.getByPlaceholderText(/Password/i), { target: { value: 'pw123' } });
 
     const button = screen.getByRole('button');
     expect(button).toHaveClass('login-button');
-
+    
     fireEvent.submit(button);
 
-    await waitFor(() => expect(mockLogin).toHaveBeenCalledWith('user@test.com', 'pw123'));
+    expect(mockAuthApiLogin).toHaveBeenCalledWith('user@test.com', 'pw123');
+
+    await waitFor(() => {
+      expect(screen.queryByText(toastMessages.invalidCredentials)).toBeInTheDocument();
+    });
   });
 
-  // TODO: enable after implementing toast
-  // it('shows error when login API returns 401', async () => {
-  //   (mockLogin as vi.Mock).mockResolvedValueOnce({ statusCode: 401 });
-
-  //   render(<LoginPage />);
-
-  //   fireEvent.change(screen.getByPlaceholderText(/Email/i), { target: { value: 'invalid@example.com' } });
-  //   fireEvent.change(screen.getByPlaceholderText(/Password/i), { target: { value: 'wrongpass' } });
-
-  //   fireEvent.submit(screen.getByRole('button', { name: /LOG IN/i }));
-
-  //   await waitFor(() => expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument());
-  // });
-
   it('stores JWT token in localStorage on successful login', async () => {
-    const mockResponse: AuthResponse = { statusCode: 200, token: 'mock_jwt_token' };
-    (mockLogin as vi.Mock).mockResolvedValueOnce(mockResponse);
+    (mockAuthApiLogin as vi.Mock).mockResolvedValue({ statusCode: 200, token: 'mock_jwt_token' });
 
-    render(<LoginPage />);
-
-    fireEvent.change(screen.getByPlaceholderText(/Email/i), { target: { value: 'user@test.com' } });
-    fireEvent.change(screen.getByPlaceholderText(/Password/i), { target: { value: 'pw123' } });
+    fireEvent.change(screen.getByPlaceholderText(/Email/i), { target: { value: 'test' } });
+    fireEvent.change(screen.getByPlaceholderText(/Password/i), { target: { value: '123' } });
 
     const button = screen.getByRole('button');
     expect(button).toHaveClass('login-button');
@@ -81,3 +72,7 @@ describe('LoginPage', () => {
     await waitFor(() => { expect(localStorage.getItem('jwt')).toBe('mock_jwt_token'); });
   });
 });
+
+
+    // TODO: left to fix tests before commit 
+    // msg "add toast messages, add constants, fix tests"
