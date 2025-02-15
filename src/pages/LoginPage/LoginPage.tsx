@@ -77,7 +77,7 @@ const LoginPage = () => {
 
           <div className={styles.formFooter}>
             {/* TODO: Move to separate component and add spinner*/}
-            <button type='submit' className={`border-0 ${loading ? 'disabled' : ''}`}>
+            <button type='submit' className={`login-button border-0 ${loading ? 'disabled' : ''}`}>
               {loading ? 'Loading...' : 'LOG IN'}
             </button>
           </div>
